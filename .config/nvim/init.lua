@@ -1,2 +1,2 @@
-print("hello fem")
-
+require("sabir.core")
+require("sabir.lazy")
