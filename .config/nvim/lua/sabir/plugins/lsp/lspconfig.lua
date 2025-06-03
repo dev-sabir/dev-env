@@ -4,7 +4,7 @@ return {
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     { "antosha417/nvim-lsp-file-operations", config = true },
-    { "folke/neodev.nvim", opts = {} },
+    { "folke/lazydev.nvim", ft = "lua", opts = {} }, -- Changed from neodev.nvim to lazydev.nvim
   },
   config = function()
     -- import lspconfig plugin
@@ -78,7 +78,7 @@ return {
     local mason_lspconfig_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
     if not mason_lspconfig_ok then
       -- Fallback: configure servers manually
-      local servers = { "lua_ls", "tsserver", "html", "cssls", "tailwindcss", "svelte", "graphql", "emmet_ls", "prismals", "pyright" }
+      local servers = { "lua_ls", "ts_ls", "html", "cssls", "tailwindcss", "svelte", "graphql", "emmet_ls", "prismals", "pyright" }
       
       for _, server in ipairs(servers) do
         if server == "lua_ls" then
