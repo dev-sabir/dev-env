@@ -10,9 +10,6 @@ return {
     -- import lspconfig plugin
     local lspconfig = require("lspconfig")
 
-    -- import mason_lspconfig plugin
-    local mason_lspconfig = require("mason-lspconfig")
-
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
@@ -71,13 +68,44 @@ return {
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
     -- Change the Diagnostic symbols in the sign column (gutter)
-    -- (not in youtube nvim video)
-    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
+    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
     for type, icon in pairs(signs) do
       local hl = "DiagnosticSign" .. type
       vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
     end
 
+    -- Check if mason-lspconfig is available before using it
+    local mason_lspconfig_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
+    if not mason_lspconfig_ok then
+      -- Fallback: configure servers manually
+      local servers = { "lua_ls", "tsserver", "html", "cssls", "tailwindcss", "svelte", "graphql", "emmet_ls", "prismals", "pyright" }
+      
+      for _, server in ipairs(servers) do
+        if server == "lua_ls" then
+          lspconfig[server].setup({
+            capabilities = capabilities,
+            settings = {
+              Lua = {
+                diagnostics = {
+                  globals = { "vim" },
+                },
+                completion = {
+                  callSnippet = "Replace",
+                },
+              },
+            },
+          })
+        else
+          lspconfig[server].setup({
+            capabilities = capabilities,
+          })
+        end
+      end
+      
+      return
+    end
+
+    -- Only use setup_handlers if mason-lspconfig is available
     mason_lspconfig.setup_handlers({
       -- default handler for installed servers
       function(server_name)
